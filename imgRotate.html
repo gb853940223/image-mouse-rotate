@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>imgRotate</title>
+  <style>
+  .pic-box {
+
+  }
+  .pic-box .pic{
+     width:120px;
+     height:180px;
+     margin:200px auto 0;
+     position: relative;
+     transform:perspective(800px) rotateX(-10deg) rotateY(0deg);
+     transform-style:preserve-3d;
+     -webkit-transform-style:preserve-3d;
+     -webkit- transform:perspective(800px) rotateX(-10deg) rotateY(0deg);
+  }
+  .pic-box .pic img{
+    width:100%;
+    height:100%;
+    position: absolute;
+    top:0;
+    left:0;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #fff;
+    -webkit-box-reflect:below 10px -webkit-linear-gradient(top,rgba(0,0,0,0) 50%,rgba(0,0,0,.5) 100%);
+    box-reflect:below 10px -webkit-linear-gradient(top,rgba(0,0,0,0) 50%,rgba(0,0,0,.5) 100%);
+  }
+  </style>
+</head>
+<body>
+
+  <div class="pic-box">
+      <div class="pic">
+            <img src="images/中兴1.jpg" alt="">
+            <img src="images/小米.jpg" alt="">
+            <img class="pic_sanxing" src="images/三星1.jpg" alt="">
+            <img class="pic_huawei" src="images/华为.png" alt="">
+            <img src="images/联想.jpg" alt="">
+            <img src="images/金立.jpg" alt="">
+            <img src="images/lg.png" alt="">
+            <img src="images/oppo.png" alt="">
+            <img src="images/锤子.png" alt="">
+            <img src="images/tcl.png" alt="">
+            <img src="images/vivo.png" alt="">
+        </div>
+    </div>
+
+  <script>
+    var imgs = document.querySelectorAll('img');
+
+    //定义初始旋转角度
+    var imgsL = imgs.length,
+        deg = 360/imgsL;
+
+    //定义鼠标是否按下
+    var isClick = false;
+
+    //定义位移变量
+    var startX = 0,
+        startY = 0;
+        movedX = 0;
+        movedY = 0;
+        resultX = 0;
+        resultY = 0;
+        rotateX = 0;
+        rotateY = 0;
+
+    var index = 0;
+
+    //鼠标抬起时的缓冲动画
+    var play;
+
+    //为第一张图片设置初始位置
+    for(var img of imgs){
+      img.style.transform = 'rotateY(' + index * deg + 'deg) translateZ(400px)';
+      img.addEventListener('dragstart',function(event){
+        return false;
+      })
+      index ++;
+    }
+
+    //鼠标交互
+    document.addEventListener('mousedown',function(event){
+      event.stopPropagation();
+      isClick = true;
+      startX = event.clientX;
+      startY = event.clientY;
+    })
+
+    document.addEventListener('mousemove',function(event){
+      event.stopPropagation();
+      if(isClick){
+        movedX = event.clientX;
+        movedY = event.clientY;
+        //计算位移的距离
+        resultX = movedX - startX;
+        resultY = movedY - startY;
+        //计算旋转的角度
+        rotateX -= resultY * 0.1;
+        rotateY += resultX * 0.2;
+        document.querySelector('.pic').style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+        //这部计算不能少
+        startX = event.clientX;
+        startY = event.clientY;
+      }
+    })
+
+    document.addEventListener('mouseup',function(event){
+      event.stopPropagation();
+      if(isClick){
+        isClick = false;
+        play = setInterval(function(){
+          resultX *= 0.95;
+          resultY *= 0.95;
+          if(resultX < 1 && resultY < 1){
+            clearInterval(play);
+            return;
+          }
+          rotateX -= resultY * 0.1;
+          rotateY += resultX * 0.2;
+          document.querySelector('.pic').style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+        },10)
+      }
+    })
+
+  </script>
+
+</body>
+</html>
